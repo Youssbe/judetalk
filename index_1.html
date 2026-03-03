@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>The Official Jude × Youssef Agenda</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink:       #1a1612;
+    --paper:     #f5f0e8;
+    --paper2:    #ede7d9;
+    --amber:     #b8722a;
+    --amber-lt:  #d4954d;
+    --amber-pale:#f0dfc0;
+    --muted:     #7a6f62;
+    --rule:      #ccc3b3;
+    --tag-bg:    #2b2520;
+    --tag-fg:    #f0dfc0;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+  -webkit-overflow-scrolling: touch;
+  padding-top: env(safe-area-inset-top);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  }
+  * { -webkit-tap-highlight-color: transparent; }
+  .content { min-width: 0; }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+  header {
+    position: relative;
+    padding: 48px 20px 40px;
+    max-width: 900px;
+    margin: 0 auto;
+    z-index: 1;
+  }
+  .header-eyebrow {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.1s;
+  }
+  h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(42px, 7vw, 80px);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 0.2s;
+  }
+  h1 em { font-style: italic; color: var(--amber); }
+  .header-sub {
+    margin-top: 24px;
+    font-size: 15px;
+    color: var(--muted);
+    max-width: 520px;
+    line-height: 1.7;
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 0.35s;
+  }
+  .header-meta {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 36px;
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 0.45s;
+    flex-wrap: wrap;
+  }
+  .meta-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: var(--tag-bg);
+    color: var(--tag-fg);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    padding: 7px 14px;
+    border-radius: 2px;
+  }
+  .meta-pill span { opacity: 0.5; font-size: 10px; }
+  .section-rule {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 20px;
+    border: none;
+    border-top: 1px solid var(--rule);
+    opacity: 0;
+    animation: fadeIn 0.8s ease forwards 0.5s;
+  }
+  .agenda {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 20px 80px;
+    position: relative;
+    z-index: 1;
+  }
+  .agenda::before {
+    content: '';
+    position: absolute;
+    left: 54px;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--rule);
+  }
+  .item {
+    display: grid;
+    grid-template-columns: 26px 1fr;
+    gap: 0 18px;
+    padding: 32px 0;
+    border-bottom: 1px solid var(--rule);
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.55s ease, transform 0.55s ease;
+    position: relative;
+  }
+  .item.visible { opacity: 1; transform: translateY(0); }
+  .num {
+    font-family: 'Playfair Display', serif;
+    font-size: 11px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--amber);
+    padding-top: 6px;
+    text-align: right;
+    position: relative;
+  }
+  .num::after {
+    content: '';
+    position: absolute;
+    right: -24px;
+    top: 9px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--amber);
+    border: 2px solid var(--paper);
+    box-shadow: 0 0 0 1px var(--amber);
+  }
+  .content { padding-left: 8px; }
+  .item-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(16px, 4.5vw, 24px);
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--ink);
+    flex: 1;
+  }
+  .tag {
+    font-size: 9.5px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 2px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-top: 4px;
+  }
+  .tag-heavy    { background: #2b2520; color: #f0dfc0; }
+  .tag-culture  { background: #1f2b2a; color: #b8e0d4; }
+  .tag-personal { background: #2a2028; color: #d4b8e0; }
+  .tag-light    { background: #252520; color: #e0dbb8; }
+  .tag-masterclass { background: #1a2535; color: #b8d0f0; }
+  .tag-health   { background: #1a2820; color: #b8e8c8; }
+  .tag-longtalk { background: #28201a; color: #f0d8b8; }
+  .tag-debate   { background: #251c1c; color: #e0b8b8; }
+  .body-text {
+    font-size: 14.5px;
+    line-height: 1.78;
+    color: #3a3028;
+    font-weight: 300;
+  }
+  .highlight {
+    background: linear-gradient(120deg, var(--amber-pale) 0%, var(--amber-pale) 100%);
+    background-size: 100% 55%;
+    background-repeat: no-repeat;
+    background-position: 0 85%;
+    font-style: italic;
+    padding: 0 2px;
+  }
+  .callout {
+    margin-top: 18px;
+    padding: 16px 20px;
+    border-left: 3px solid var(--amber);
+    background: var(--paper2);
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: var(--muted);
+    font-style: italic;
+  }
+  .callout strong { font-style: normal; font-weight: 500; color: var(--ink); }
+  .venue {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 16px;
+    font-size: 11.5px;
+    font-weight: 500;
+    color: var(--amber);
+    letter-spacing: 0.04em;
+  }
+  .venue::before { content: '\2937'; font-size: 13px; }
+  footer {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 20px calc(40px + env(safe-area-inset-bottom));
+  }
+  .footer-inner {
+    background: var(--tag-bg);
+    color: var(--tag-fg);
+    padding: 28px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .footer-title { font-family: 'Playfair Display', serif; font-size: 22px; font-style: italic; margin-bottom: 6px; }
+  .footer-sub { font-size: 12px; opacity: 0.5; letter-spacing: 0.06em; }
+  .footer-badges { display: flex; gap: 12px; flex-wrap: wrap; }
+  .badge {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 8px 14px;
+    border: 1px solid rgba(240,223,192,0.2);
+    color: var(--tag-fg);
+    opacity: 0.7;
+  }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  /* Mobile (base — no media query needed, styles above are mobile-first) */
+  /* Desktop upgrade */
+  @media (min-width: 640px) {
+    header { padding: 80px 48px 64px; }
+    .section-rule { padding: 0 48px; }
+    .agenda { padding: 0 48px 120px; }
+    .agenda::before { left: 88px; }
+    .item { grid-template-columns: 40px 1fr; gap: 0 32px; padding: 52px 0; }
+    .num::after { right: -38px; top: 12px; }
+    h2 { font-size: clamp(19px, 2.6vw, 24px); }
+    footer { padding: 0 48px 80px; }
+    .footer-inner { flex-direction: row; align-items: center; justify-content: space-between; padding: 40px 44px; }
+    .footer-title { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <p class="header-eyebrow">The Official Catch-Up &nbsp;&middot;&nbsp; London, 2026</p>
+  <h1>Jude <em>&times;</em> Youssef<br>Agenda</h1>
+  <p class="header-sub">A curated list of genuinely unfinished intellectual business. Cover all topics. No skipping. No deflecting.</p>
+  <div class="header-meta">
+    <span class="meta-pill">11 Topics <span>/ all mandatory</span></span>
+    <span class="meta-pill">&#9749; 3 hrs minimum <span>/ bring tea</span></span>
+  </div>
+</header>
+
+<hr class="section-rule">
+
+<main class="agenda">
+
+  <article class="item">
+    <div class="num">01</div>
+    <div class="content">
+      <div class="item-header">
+        <h2>Geopolitics, Religion &amp; the New World Order</h2>
+        <span class="tag tag-heavy">The Main Event</span>
+      </div>
+      <p class="body-text">
+        We have started this conversation at 2am on March 2nd and it clearly has miles left in it.
+        The death of Nasrallah as the end of political Islam, the Gulf&#8217;s pivot from religion to techno-economic prosperity,
+        October 7 as a signal of a new belief system being imposed, the Shia vs Sunni theological divide &#8212;
+        <span class="highlight">Jude, I feel you are reluctant to adapt my thoughts and you have your own angles to add.</span>
+        You also referenced a Subway Takes video on religion &#8212; we need to watch this together!
+      </p>
+    </div>
+  </article>
+
+  <article class="item">
+    <div class="num">02</div>
+    <div class="content">
+      <div class="item-header">
+        <h2>Palestinian Cinema &#8212; An Unresolved Debate</h2>
+        <span class="tag tag-culture">Film &amp; Art</span>
+      </div>
+      <p class="body-text">
+        We have genuinely different reads on <em>The Teacher</em>, and there&#8217;s a rich discussion unresolved around
+        the tension between documentary impulse vs. singular storytelling in Palestinian film.
+        We discussed <em>Farha</em>, <em>Palestine 36</em>, <em>Bye Bye Tiberias</em> &#8212; and
+        I wanted to hear your full take on how <em>Palestine 36</em> exposes the Palestinian bourgeoisie.
+      </p>
+      <div class="callout">
+        <strong>On the table:</strong> maybe we go watch <em>Voice of Hind</em> after all?
+      </div>
+    </div>
+  </article>
+
+  <article class="item">
+    <div class="num">03</div>
+    <div class="content">
+      <div class="item-header">
+        <h2>Jude&#8217;s Presentation &#8212; Stewardship &amp; Palestine</h2>
+        <span class="tag tag-masterclass">Jude's Masterclass</span>
+      </div>
+      <p class="body-text">
+        Your presentation <em>&#8220;The Role of Stewardship &amp; Engagement on the Road to a Free Palestine&#8221;</em>,
+        linking sustainable finance tools to the Palestinian movement. I am
+        <span class="highlight">&#8220;super keen&#8221;</span> to see it and I&#8217;m waiting for you to walk me through it.
+      </p>
+      <p class="venue">I invite you to the Tunisian caf&eacute; for this one.</p>
+    </div>
+  </article>
+
+  <article class="item">
+    <div class="num">04</div>
+    <div class="content">
+      <div class="item-header">
+        <h2>Tech as the New Dominant Ideology &#8212; Youssef&#8217;s Memo</h2>
+        <span class="tag tag-heavy">Joint TED Talk</span>
+      </div>
+      <p class="body-text">
+        I floated a big idea: technological dogmatism as the new world religion, replacing political Islam, nationalism, everything.
+        I compared it to the CCP model. Now you have a whole speech on social engineering through tech &#8212;
+        <span class="highlight">&#8220;with the Instagram story like button as exhibit A.&#8221;</span>
+        This will be our joint TED talk waiting to happen.
+      </p>
+    </div>
+  </article>
+
+  <article class="item">
+    <div class="num">05</div>
+    <div class="content">
+      <div class="item-header">
+        <h2>Wearables, Health Tech &amp; the Whoop Discourse</h2>
+        <span class="tag tag-health">Our Health Talk</span>
+      </div>
+      <p class="body-text">
+        I am a Whoop devotee. You used to be one and have &#8220;mixed thoughts on the wearables space.&#8221;
+        You spotted my 805-calorie skiing session taken at 5am from a red recovery score once &#8212;
+        <span class="highlight">this evidence is damning, and you need to get your Whoop back.</span>
+        Also on the table: my aspiration to move into health tech through the lifestyle angle.
+      </p>
+    </div>
+  </article>
+
+  <article class="item">
+    <div class="num">06</div>
+    <div class="content">
+      <div class="item-header">
+        <h2>What Is Home? &#8212; The Identity &amp; Belonging Chapter</h2>
+        <span class="tag tag-longtalk">Long Talk</span>
+      </div>
+      <p class="body-text">
+        You explicitly said <em>&#8220;I can elaborate in person&#8221;</em> when I asked about Bahrain not feeling like home.
+        You mentioned having <em>&#8220;epiphanies&#8221;</em> in the last 4&#8211;6 months about your own answer to this question.
+        I put Tunis forward as my anchor but also acknowledged the London pull.
+        There&#8217;s also the Palestinian identity thread &#8212; your family&#8217;s village, the house you saw on Instagram,
+        the sense of displacement that doesn&#8217;t quite match any single city.
+      </p>
+      <p class="venue">For this one I invite you for dinner.</p>
+    </div>
+  </article>
+
+  <article class="item">
+    <div class="num">07</div>
+    <div class="content">
+      <div class="item-header">
+        <h2>Youssef&#8217;s Complicated Relationship with the Middle East</h2>
+        <span class="tag tag-personal">Story Time</span>
+      </div>
+      <p class="body-text">
+        I casually dropped: <em>&#8220;2030 will be the year I make peace with the ME and go to Saudi.&#8221;</em>
+        You immediately responded: <em>&#8220;That sounds like a story time. Add it.&#8221;</em>
+        I agreed it would <em>&#8220;sound like a post-trauma session.&#8221;</em>
+      </p>
+      <div class="callout">It&#8217;s on the agenda. <strong>Full story time required.</strong></div>
+    </div>
+  </article>
+
+  <article class="item">
+    <div class="num">08</div>
+    <div class="content">
+      <div class="item-header">
+        <h2>The Sleep Wars</h2>
+        <span class="tag tag-debate">Settle It</span>
+      </div>
+      <p class="body-text">
+        I think sleep is a waste of time. I get irritated at people who wake up late even if they&#8217;re your best friends.
+        I shower 3 times a day and clean the house before anyone else is awake.
+        Your sleep schedule is, by your own admission, a disaster &#8212; you consider sleeping at 12:45am an <em>&#8220;accomplishment.&#8221;</em>
+        I called you out, your friend called you out, and yet you persist.
+      </p>
+      <div class="callout">
+        The question of whether this is a curse or a blessing for you remains <strong>officially unresolved.</strong>
+        I promised to &#8220;assess and tell you.&#8221;
+      </div>
+    </div>
+  </article>
+
+  <article class="item">
+    <div class="num">09</div>
+    <div class="content">
+      <div class="item-header">
+        <h2>Am I a Startup Hustle Bro? &#8212; Clarification Required</h2>
+        <span class="tag tag-light">A Verdict Is Needed</span>
+      </div>
+      <p class="body-text">
+        My exact words: <em>&#8220;I guess I will clarify this with you as part of the agenda.&#8221;</em>
+        This was triggered after you pointed out that &#8220;sleep is a waste of time&#8221; is textbook Subway Takes energy.
+        For the record, you also declared me a startup bro. The lines are blurry.
+      </p>
+      <p class="venue">Maybe you invite me for a Palestinian Maramia so I can forgive you for calling me a tech bro?</p>
+    </div>
+  </article>
+
+  <article class="item">
+    <div class="num">10</div>
+    <div class="content">
+      <div class="item-header">
+        <h2>Rio &#8212; The Full Unedited Version</h2>
+        <span class="tag tag-light">No Filter</span>
+      </div>
+      <p class="body-text">
+        I strategically showed you only the beautiful sunset-and-fruit-vendors side of Rio. You knew I was hiding something.
+        I said <em>&#8220;let&#8217;s keep it that way so you go visit with full optimism.&#8221;</em>
+        You said <em>&#8220;you can tell me the full version when I see you.&#8221;</em>
+      </p>
+      <div class="callout"><strong>Deliver the unvarnished debrief.</strong></div>
+    </div>
+  </article>
+
+  <article class="item" style="border-bottom:none;">
+    <div class="num">11</div>
+    <div class="content">
+      <div class="item-header">
+        <h2>Timon &amp; Pumbaa vs. Shark &amp; Little Fish</h2>
+        <span class="tag tag-debate">Unresolved</span>
+      </div>
+      <p class="body-text">
+        Who is who in this friendship? We both agreed to <em>&#8220;avoid&#8221;</em> settling the Shark Tale dynamic
+        (implying something uncomfortable lurks there). You said <em>&#8220;only time will tell&#8221;</em> &#8212;
+        <span class="highlight">I am still wondering what you mean.</span>
+      </p>
+    </div>
+  </article>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <div>
+      <p class="footer-title">Good luck. You&#8217;re going to need it.</p>
+      <p class="footer-sub">&#8220;We&#8217;re gonna need minutes at this point.&#8221; &#8212; Jude, 28 Feb 2026, 5am</p>
+    </div>
+    <div class="footer-badges">
+      <span class="badge">&#9749; Bring tea</span>
+      <span class="badge">&#128505; Phones down</span>
+      <span class="badge">&#128336; 3 hrs min</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const items = document.querySelectorAll('.item');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 60);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08 });
+  items.forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
